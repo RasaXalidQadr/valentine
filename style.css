@@ -1,0 +1,97 @@
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(#ff758c, #ff7eb3);
+  font-family: Arial, sans-serif;
+}
+
+.card {
+  background: white;
+  padding: 20px;
+  border-radius: 15px;
+  text-align: center;
+  width: 90%;
+  max-width: 400px;
+}
+
+.controls {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 14px;
+}
+
+.btn {
+  padding: 10px 18px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+  transition: transform 160ms ease, box-shadow 160ms ease;
+  transform-origin: center center;
+}
+
+.btn.yes {
+  background: linear-gradient(180deg,#ffd1dc,#ffb3d6);
+  color: #400028;
+}
+
+.btn.no {
+  background: #fff;
+  color: #c0392b;
+  border: 2px solid #ffd1dc;
+}
+
+.btn:hover { box-shadow: 0 10px 24px rgba(0,0,0,0.14); }
+
+.surprise {
+  margin-top: 18px;
+  display: none;
+}
+
+.surprise svg { max-width: 100%; height: auto; border-radius: 10px; }
+.surprise img { max-width: 100%; height: auto; border-radius: 10px; box-shadow: 0 8px 28px rgba(0,0,0,0.18); }
+
+.card { position: relative; overflow: visible; }
+
+.confetti-container {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.confetti {
+  position: absolute;
+  will-change: transform, opacity;
+  border-radius: 2px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+
+@keyframes confetti-fall {
+  from { transform: translateY(-10px) rotate(0deg); opacity: 1 }
+  to { transform: translateY(220px) rotate(200deg); opacity: 0 }
+}
+
+/* Mobile / touch optimizations */
+@media (max-width: 480px) {
+  body { padding: 12px; }
+  .card { width: 100%; max-width: 420px; padding: 18px; }
+  .controls { flex-direction: column; gap: 10px; }
+  .btn { width: 100%; font-size: 18px; padding: 14px 18px; border-radius: 12px; }
+  .btn.yes { font-size: 20px; }
+  .surprise img { border-radius: 8px; }
+}
+
+/* Toast feedback */
+#toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: 22px; background: rgba(0,0,0,0.85); color: #fff; padding: 10px 14px; border-radius: 20px; font-size: 14px; opacity: 0; pointer-events: none; transition: opacity 180ms ease, transform 180ms ease; z-index: 9999 }
+#toast.visible { opacity: 1; transform: translateX(-50%) translateY(-6px); }
+
+.btn.share { background: linear-gradient(180deg,#8fe3ff,#6bbcff); color: #013049; }

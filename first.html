@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>For You ❤️</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="card" id="card">
+    <h1 id="heading">Can I be your Valentine?</h1>
+    <p id="sub">I made something for you — choose one:</p>
+
+    <div class="controls">
+      <button id="yes" class="btn yes">Yes</button>
+      <button id="no" class="btn no">No</button>
+      <button id="share" class="btn share" style="display:none">Share</button>
+    </div>
+
+    <div id="confetti-container" class="confetti-container" aria-hidden="true"></div>
+
+    <div id="surprise" class="surprise" aria-hidden="true">
+      <!-- Real photo: loads a royalty-free image from Unsplash by default.
+           If you prefer an offline image, place a file named `cat-flowers.jpg`
+           next to `first.html` and it will be used instead (browser will pick local src).
+      -->
+       <!-- Try a local file named `cat-hugs.gif` (use the attached image).
+         If it isn't present, fall back to the Unsplash photo. -->
+      <img id="catImage" src="cat-hugs.gif" alt="Cat holding flowers" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1518791841217-8f162f1e1131?auto=format&fit=crop&w=800&q=80'" />
+    </div>
+
+  </div>
+
+  <script>
+    (function(){
+      const yes = document.getElementById('yes');
+      const no = document.getElementById('no');
+      const surprise = document.getElementById('surprise');
+      const heading = document.getElementById('heading');
+      const sub = document.getElementById('sub');
+
+      let scale = 1;
+
+      no.addEventListener('click', () => {
+        // Make the Yes button grow and playfully wiggle
+        scale = Math.min(scale * 1.25, 12);
+        yes.style.transform = `scale(${scale})`;
+        yes.style.transition = 'transform 300ms ease';
+
+        // small horizontal nudge for fun
+        yes.animate([
+          { transform: `scale(${scale}) translateX(0)` },
+          { transform: `scale(${scale}) translateX(-12px)` },
+          { transform: `scale(${scale}) translateX(6px)` },
+          { transform: `scale(${scale}) translateX(0)` }
+        ], { duration: 350 });
+      });
+
+      yes.addEventListener('click', () => {
+        // Confetti celebration (fewer pieces on narrow screens)
+        const confettiCount = window.innerWidth <= 480 ? 24 : 40;
+        createConfetti(confettiCount);
+
+        // Show the cat-with-flowers and message
+        surprise.setAttribute('aria-hidden', 'false');
+        surprise.style.display = 'block';
+        // replace heading and subtext
+        heading.textContent = 'Yes! 💖';
+        sub.textContent = 'You made me so happy — here is a little gift:';
+
+        // hide buttons area
+        document.querySelector('.controls').style.display = 'none';
+
+        // Show the Share button so they can send the page (if hosted)
+        const shareBtn = document.getElementById('share');
+        if (shareBtn) {
+          shareBtn.style.display = 'inline-block';
+        }
+      });
+
+      // Share button: use Web Share API on mobile, otherwise copy URL to clipboard
+      const shareBtn = document.getElementById('share');
+      const toast = document.createElement('div');
+      toast.id = 'toast';
+      document.body.appendChild(toast);
+
+      if (shareBtn) {
+        shareBtn.addEventListener('click', async () => {
+          const pageUrl = window.location.href;
+          const shareData = { title: document.title, text: 'A little surprise for you 💖', url: pageUrl };
+          try {
+            if (navigator.share) {
+              await navigator.share(shareData);
+            } else if (navigator.clipboard) {
+              await navigator.clipboard.writeText(pageUrl);
+              showToast('Link copied to clipboard');
+            } else {
+              // fallback: select and copy
+              const dummy = document.createElement('textarea');
+              dummy.value = pageUrl;
+              document.body.appendChild(dummy);
+              dummy.select();
+              document.execCommand('copy');
+              dummy.remove();
+              showToast('Link copied to clipboard');
+            }
+          } catch (err) {
+            showToast('Unable to share — try copying the URL manually');
+          }
+        });
+      }
+
+      function showToast(msg) {
+        const t = document.getElementById('toast');
+        if (!t) return;
+        t.textContent = msg;
+        t.classList.add('visible');
+        setTimeout(() => t.classList.remove('visible'), 2200);
+      }
+
+      // Confetti generator: creates small colored pieces that fall and fade
+      function createConfetti(count) {
+        const colors = ['#ff6b6b','#ffd166','#6bcB77','#6bbcff','#ff9ff3','#ff758c'];
+        const container = document.getElementById('confetti-container');
+        const rect = container.getBoundingClientRect();
+
+        for (let i = 0; i < count; i++) {
+          const el = document.createElement('div');
+          el.className = 'confetti';
+          const size = Math.floor(Math.random() * 10) + 6; // 6-15px
+          el.style.width = `${size}px`;
+          el.style.height = `${Math.floor(size * 1.4)}px`;
+          el.style.background = colors[Math.floor(Math.random() * colors.length)];
+          // random horizontal start within the card
+          el.style.left = `${Math.random() * 100}%`;
+          el.style.top = `-10px`;
+          el.style.opacity = '1';
+
+          container.appendChild(el);
+
+          const fallDuration = 800 + Math.random() * 1000; // 0.8s - 1.8s
+          const rotate = (Math.random() * 360) * (Math.random() < 0.5 ? 1 : -1);
+          const finalY = rect.height + 60 + Math.random() * 60;
+
+          const animation = el.animate([
+            { transform: `translateY(0px) rotate(0deg)`, opacity: 1 },
+            { transform: `translateY(${finalY}px) rotate(${rotate}deg)`, opacity: 0 }
+          ], {
+            duration: fallDuration,
+            easing: 'cubic-bezier(.2,.7,.3,1)'
+          });
+
+          animation.onfinish = () => {
+            el.remove();
+          };
+        }
+      }
+
+      // make sure surprise is hidden initially
+      surprise.style.display = 'none';
+    })();
+  </script>
+
+</body>
+</html>
